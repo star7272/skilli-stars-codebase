@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SKILLI STARS CODEBASE</title>
+<style>
+/* MATRIX BACKGROUND */
+body {
+    margin: 0;
+    background: black;
+    font-family: Arial;
+    overflow-x: hidden;
+}
+canvas#matrixCanvas {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+}
+
+/* NEON TITLE */
+#logoArea {
+    text-align: center;
+    margin-top: 20px;
+}
+#logoArea img {
+    width: 140px;
+    filter: drop-shadow(0 0 15px #0ff);
+}
+#logoArea h1 {
+    font-size: 40px;
+    color: #00c8ff;
+    text-shadow: 0 0 15px #00c8ff, 0 0 30px #0077ff;
+    margin-top: 10px;
+}
+
+/* FORM CONTAINER */
+.container {
+    width: 380px;
+    background: rgba(0,0,0,0.7);
+    margin: auto;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #0ff;
+    color: white;
+}
+
+/* NEON BUTTONS */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: black;
+    border: 2px solid #00eaff;
+    color: #00eaff;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-shadow:0 0 10px #00eaff;
+}
+button:hover {
+    background: #00eaff;
+    color: black;
+    box-shadow: 0 0 20px #00eaff;
+}
+
+/* INPUT */
+input {
+    width: 100%;
+    padding: 10px;
+    background:black;
+    border:2px solid #00eaff;
+    border-radius: 8px;
+    margin-top: 7px;
+    color: white;
+}
+
+/* LESSON BOX */
+.lesson-box {
+    background: rgba(0,0,0,0.85);
+    padding: 15px;
+    margin-top: 10px;
+    border: 2px solid #00eaff;
+    border-radius: 12px;
+    color: #00eaff;
+}
+
+/* MENU */
+#menuToggle {
+    position: fixed;
+    top:20px;
+    left:20px;
+    font-size: 35px;
+    color: #00eaff;
+    cursor: pointer;
+    text-shadow:0 0 10px #00eaff;
+}
+
+#sideMenu {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height:100%;
+    background: rgba(0,0,0,0.9);
+    border-right: 2px solid #00eaff;
+    box-shadow: 0 0 20px #00eaff;
+    padding-top: 70px;
+    transition: 0.3s;
+}
+
+#sideMenu a {
+    display: block;
+    padding: 15px;
+    color: #00eaff;
+    text-decoration: none;
+    font-size: 20px;
+    text-shadow: 0 0 10px #00eaff;
+}
+#sideMenu a:hover {
+    background: #00eaff;
+    color: black;
+}
+
+/* COPYRIGHT */
+#copyright {
+    text-align:center;
+    margin-top:40px;
+    color:#00eaff;
+    text-shadow:0 0 10px #00eaff;
+    margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div id="menuToggle">☰</div>
+
+<div id="sideMenu">
+    <a onclick="showLogin()">Login</a>
+    <a onclick="showRegister()">Register</a>
+    <a onclick="showLessons()">Lessons</a>
+    <a onclick="showProfile()">Profile</a>
+    <a onclick="showAdmin()">Admin Dashboard</a>
+</div>
+
+<div id="logoArea">
+    <img src="https://files.catbox.moe/wkuosq.png">
+    <h1>SKILLI STARS CODEBASE</h1>
+</div>
+
+<div id="main"></div>
+
+<div id="copyright">
+    © 2025 SKILLI STARS CODEBASE — All Rights Reserved
+</div>
+
+<script>
+/* ================= MATRIX BACKGROUND ================= */
+const canvas = document.getElementById("matrixCanvas");
+const ctx = canvas.getContext("2d");
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+let matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+matrix = matrix.split("");
+
+let fontSize = 12;
+let columns = canvas.width/fontSize;
+let drops = [];
+
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0,0,0,0.07)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle = "#00eaff";
+    ctx.font = fontSize + "px arial";
+
+    for (let i = 0; i < drops.length; i++) {
+        let text = matrix[Math.floor(Math.random()*matrix.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+
+        if (drops[i]*fontSize > canvas.height && Math.random() > 0.95)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 35);
+
+/* ================== PAGE SWITCHING ================== */
+function showLogin(){
+    document.getElementById("main").innerHTML = `
+    <div class='container'>
+        <h2>Login</h2>
+        <input id='loginUser' placeholder='Username'>
+        <input id='loginPass' type='password' placeholder='Password'>
+        <button onclick='doLogin()'>Login</button>
+    </div>
+    `;
+}
+
+function showRegister(){
+    document.getElementById("main").innerHTML = `
+    <div class='container'>
+        <h2>Register</h2>
+        <input id='regUser' placeholder='Username'>
+        <input id='regPass' type='password' placeholder='Password'>
+        <button onclick='doRegister()'>Register</button>
+    </div>
+    `;
+}
+
+function showProfile(){
+    let u = localStorage.getItem("currentUser");
+    document.getElementById("main").innerHTML = `
+    <div class='container'>
+        <h2>Profile</h2>
+        <p>Logged in as: <b>${u}</b></p>
+    </div>`;
+}
+
+function showAdmin(){
+    document.getElementById("main").innerHTML = `
+    <div class='container'>
+        <h2>Admin Dashboard</h2>
+        <p style="color:#00eaff">Users Registered:</p>
+        <div class='lesson-box'>${localStorage.getItem("usersDB")}</div>
+    </div>
+    `;
+}
+
+/* ============ LESSONS WITH FULL NOTES ============ */
+function showLessons(){
+    document.getElementById("main").innerHTML = `
+    <div class='container'>
+        <h2>Lessons</h2>
+
+        ${generateLesson(1,"Introduction to Coding",
+`Coding is giving instructions to computers.
+You will learn:
+✓ What programming is  
+✓ How computers read instructions  
+✓ Syntax basics`)}
+
+        ${generateLesson(2,"HTML Basics",
+`HTML builds website structure.
+You will learn:
+✓ Tags  
+✓ Headings  
+✓ Paragraphs  
+✓ Links  
+✓ Images`)}
+
+        ${generateLesson(3,"CSS Styling",
+`CSS makes websites beautiful.
+Topics:
+✓ Colors  
+✓ Borders  
+✓ Shadows  
+✓ Layouts`)}
+
+        ${generateLesson(4,"JavaScript Basics",
+`JS adds logic.
+Topics:
+✓ Variables  
+✓ Functions  
+✓ Events  
+✓ DOM manipulation`)}
+
+        ${generateLesson(5,"PHP Basics",
+`PHP runs on servers.
+Topics:
+✓ Echo  
+✓ Variables  
+✓ GET/POST  
+✓ Connecting to MySQL`)}
+
+        ${generateLesson(6,"Database Basics",
+`You will learn:
+✓ Tables  
+✓ Rows  
+✓ Primary keys  
+✓ SQL queries`)}
+
+        ${generateLesson(7,"Advanced JavaScript",
+`Topics:
+✓ Arrays  
+✓ Objects  
+✓ Loops  
+✓ Async code`)}
+
+        ${generateLesson(8,"Building a Login System",
+`Concepts:
+✓ Forms  
+✓ Validation  
+✓ Sessions  
+✓ Password hashing`)}
+
+        ${generateLesson(9,"APIs",
+`You will learn:
+✓ What an API is  
+✓ JSON  
+✓ Fetch()  
+✓ REST APIs`)}
+
+        ${generateLesson(10,"Final Project",
+`Build a real website using everything you learned!`)}
+    </div>
+    `;
+}
+
+/* Helper for lessons */
+function generateLesson(num, title, text){
+    return `
+    <div class='lesson-box'>
+        <h3>Lesson ${num}: ${title}</h3>
+        <p>${text.replace(/\n/g,"<br>")}</p>
+    </div>`;
+}
+
+/* ================== AUTH ================== */
+function doRegister(){
+    let user = document.getElementById("regUser").value;
+    let pass = document.getElementById("regPass").value;
+
+    if(!user || !pass){ alert("Fill all fields!"); return; }
+
+    localStorage.setItem("user_" + user, pass);
+
+    let db = localStorage.getItem("usersDB") || "";
+    db += `<br>${user}`;
+    localStorage.setItem("usersDB", db);
+
+    alert("Registration successful!");
+    showLogin();
+}
+
+function doLogin(){
+    let user = document.getElementById("loginUser").value;
+    let pass = document.getElementById("loginPass").value;
+
+    let stored = localStorage.getItem("user_" + user);
+
+    if(stored === pass){
+        localStorage.setItem("currentUser", user);
+        alert("Logged in!");
+        showLessons();
+    } else {
+        alert("Incorrect login");
+    }
+}
+
+/* MENU OPEN */
+let openMenu = false;
+document.getElementById("menuToggle").onclick = ()=>{
+    openMenu = !openMenu;
+    document.getElementById("sideMenu").style.left = openMenu ? "0px" : "-250px";
+};
+</script>
+
+</body>
+</html>
