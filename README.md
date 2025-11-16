@@ -1,1 +1,0 @@
-# skilli-stars-codebase
